@@ -19,4 +19,31 @@ Topics - What is AWS, Wys Cloud Computing?,
       - downtime, if loud provider down, no reach
       - loss control, if u use cloud, u know that sensitive data is also shairing
       - lack of support, no needed support at all the time
-     
+ 
+ Topics - Cloud Computing Architecture
+  - Front-end and Back-end
+  - Fe - client part, user, user interface, ie. webbrowsers
+  - Be - host manage, virtual machine, data storage, deployment models, traffic control, et. built in security systems.
+  - Actor / Role Based Model; cloud consumer, cloud provider, cloud broker, cloud auditor, cloud carries.
+  
+ Topics - Cloud DEployment Models
+  - Public Cloud, Private Cloud, Community Cloud, Hybrid Cloud
+  - Broad network access, self service, measured service, shared resource, elastic.
+  - Amazon EC2, Google AppEngine, Windows Azure, IBM Blue Cloud are public clouds
+  - private cloud is more secure, prevent data loss, reduce cost some condition.
+  - community cloud, lower cost, easy to share and colloborate
+  - https://youtu.be/36zducUX16w
+  - Software as a servise, on-demand service, pay per use, independent platform, no need to install, avaliable for multiple user, cheap, vendor manage, reach by browser, acceessible form any platform, reach from everywhere, good for colloboration, vendor provide modest tools, allow for multi user, pratable, internet performance important, some restriction, especially END Customers
+  - Platform as a services, Develeopers use it
+  - Infrastructure as a service, Sys admins use it, like amazon ec2, icloud apple. azure, ggole cloud, 
+  
+ Topics - Cloud Service Models
+  - On-premise; everthing depends you
+  - Infrastructure as a service, scalable
+  - Platform as a service, AWS Elacstic Beanstalk, FGoogle app enginde, microsoft azure, cost time eeffectif and sit for one application devellopper
+  - Software as a service, connect and use model over internet, e mail, office, reliable
+  - 
+  
+  
+  
+ 
