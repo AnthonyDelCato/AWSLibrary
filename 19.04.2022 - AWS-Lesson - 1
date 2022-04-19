@@ -1,0 +1,22 @@
+Topics - What is AWS, Wys Cloud Computing?, 
+  - Nowadays every internet action relies on the cloud directly.
+  - It is for reducing the costs
+  - high level of security
+  - provide flexiblity
+  - less cost for maintenence
+  - benefits; 
+     - cost eficiency, not need investmenet for hardware, scalable with the needs
+     - elasticity and flexiblity, give chance to increase or decrese using resource, it wors everywhere
+      - reliability, secure data, always have back up ready
+      - increased security, no need security cost, everything on cloud is secure against broken or stolen,
+      - manageability, u need just internet and laptop to reach everything
+      - availablity, extending if needed bandwith, execution and operation continue flow
+      - centralization, all data in one location, reachable everywhere
+      - auto-update, cloude service provider do verything
+      - no maintenence, 
+   - disadvantages;
+      - internete dependancy, low speed is diffucult to reach
+      - downtime, if loud provider down, no reach
+      - loss control, if u use cloud, u know that sensitive data is also shairing
+      - lack of support, no needed support at all the time
+     
