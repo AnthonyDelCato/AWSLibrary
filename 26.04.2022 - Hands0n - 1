@@ -1,0 +1,242 @@
+- Example 1
+  - launch instance and make necessary confiuration by terminal
+# Hands-on EC2-01 : How to Install Apache Web Server on EC2 Linux 2
+## Outline
+- Part 1 - Getting to know the Apache Web Server
+- Part 2 - Launching an Amazon Linux 2 EC2 instance and Connect with SSH
+- Part 3 - Installing and Configuring Apache Web Server to Run `Hello World` Page
+- Part 4 - Automation of Web Server Installation through Bash Script
+## Part 1 - Getting to know the Apache Web Server
+![Apache HTTP Server](./apache-web-server.png)
+The Apache HTTP Server, known as Apache, is a free and open-source cross-platform web server software, which is developed and maintained by an open community of developers under the auspices of the Apache Software Foundation.
+## Part 2 - Launching an Amazon Linux 2 EC2 instance and Connect with SSH
+1. Launch an Amazon EC2 instance with setting seen below: 
+AMI: "Amazon Linux 2"
+Instance Type : "t2micro"
+Region: "N.Virginia"
+VPC: "Default VPC"
+Securtiy Group: "0.0.0.0/0-----> Port 22"
+2. Connect to your instance with SSH.
+ssh -i .....pem ec2-user@
+## Part 3 - Installing and Configuring Apache Web Server to Run `Hello World` Page
+# STEP_1_ Default Apache Web Server
+3. Update the installed packages and package cache on your instance.
+sudo yum update -y
+4. Install the Apache Web Server-default page
+sudo yum install httpd -y
+5. Check status of the Apache Web Server. show taht it is not running(Red). After that Start the Apache Web Server.
+sudo systemctl status httpd
+sudo systemctl start httpd
+6. Check status of the Apache Web Server.Show that it is running (Green)
+sudo systemctl status httpd
+7. Enable the Apache Web Server to survive the restarts then Check from browser with DNS.  Since the security group is available only for add HTTP add port 80 and show again.
+sudo systemctl enable httpd
+Securtiy Group: "0.0.0.0/0-----> Port 80"
+# STEP_2_ Basic Customization of  Apache Web Server
+8. Set permission of the files and folders under `/var/www/html/` folder to everyone.
+sudo chmod -R 777 /var/www/html
+9. Go to the /var/www/html
+cd /var/www/html
+10. Create a custom `index.html` file under `/var/www/html/` folder to be served on the Server.
+echo "HELLO EVERYONE" > /var/www/html/index.html
+11. check the index.html
+ls 
+cat index.html
+12. Restart the httpd server and `check` from browser.
+sudo systemctl restart httpd
+# STEP_3- Customization of  Apache Web Server with HTML format
+13. open index.html  file with vim editor.
+cd /var/www/html
+vim index.html
+press I
+14. clean the existing messsage then paste the html formatted code.
+<html>
+<head>
+    <title> My First Web Server</title>
+</head>
+<body>
+    <h1>Hello to Everyone from My First Web Server</h1>
+</body>
+</html>
+15. Save and exit and show with cat command
+ESC :wq
+cat index.html
+16. Restart the Apache Web Server.
+sudo systemctl restart httpd
+17. Check if the Web Server is working properly from the browser.
+## Part 4 - Automation of Web Server Installation through Bash Script
+18. Configure an Amazon EC2 instance with AMI as `Amazon Linux 2`, instance type as `t2.micro`, default VPC security group which allows connections from anywhere and any port.
+19. Configure instance to automate web server installation with `user data` script.
+#! /bin/bash
+#update os
+yum update -y
+#install apache server
+yum install -y httpd
+# get date and time of server
+DATE_TIME=`date`
+# create a custom index.html file
+echo "<html>
+<head>
+    <title> My First Web Server</title>
+</head>
+<body>
+    <h1>Hello to Everyone from My First Web Server</h1>
+    <p>This instance is created at <b>$DATE_TIME</b></p>
+</body>
+</html>" > /var/www/html/index.html
+# start apache server
+systemctl start httpd
+systemctl enable httpd
+20. Review and launch the EC2 Instance
+21. Once Instance is on, check if the Apache Web Server is working from the web browser.
+22. Connect the Apache Web Server from the local terminal with `curl` command.
+curl http://ec2-3-15-183-78.us-east-2.compute.amazonaws.com8.us-east-2.compute.amazonaws.com
+
+
+
+
+
+
+
+
+
+- Example 2
+  - Launch instance with pre-edit features
+
+#! /bin/bash
+#update os
+yum update -y
+#install apache server
+yum install -y httpd
+# get date and time of server
+DATE_TIME=`date`
+# create a custom index.html file
+echo "<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anthony Del Cato Portfolio Page</title>
+    <style>
+        /* * {
+  border: 1px solid black;
+}
+*/
+body {
+    height: 100vh;
+  }
+  .container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+  }
+  
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #header {
+    background-color: black;
+    border-bottom: 5px solid red;
+  }
+  
+  #header a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  #header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  #header li {
+    display: inline;
+    padding: 0 20px;
+    font-family: "Audiowide", sans-serif;
+  }
+  #branding {
+    color: white;
+    font-family: "Audiowide", sans-serif;
+  }
+  
+  #spanColor {
+    color: #ff0000;
+  }
+  #main {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.6)),
+      url("banner.jpg");
+    background-size: cover;
+    text-align: center;
+    color: white;
+    height: 90vh;
+  }
+  
+  #main h1 {
+    font-size: 60px;
+    margin: 200px 0 10px;
+    font-family: "Audiowide", sans-serif;
+  }
+  
+  #main p {
+    font-size: 30px;
+    font-family: "Audiowide", sans-serif;
+  }
+  
+  #about, #contact {
+    background-color: black;
+    color: white;
+  }
+  #about h2, #contact h2 {
+    font-size: 30px;
+    font-family: "Audiowide", sans-serif;
+    text-align: center;
+    color: red;
+  }
+  
+  #about p, #contact p {
+    font-size: 20px;
+    font-family: "Arial", sans-serif;
+    padding: 0 10px;
+  }
+  
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <div class="container">
+            <div id="branding">
+                <h1>Anthony<span id="spanColor">DEL CATO</span> </h1>
+                
+            </div>
+            <div id="nav">
+                <ul>
+                    <li><a href="index.html" target="_blank">HOME</a></li>
+                    <li><a href="about.html" target="_blank">ABOUT</a></li>
+                    <li><a href="contact.html" target="_blank">CONTACT</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="main">
+        <div class="container">
+            <h1>
+                I'm a Devops Engineer and AWS Solutions Architect
+            </h1>
+            <p>
+                Check out my certificates and badges below!
+            </p>
+
+        </div>
+    </div>
+</body>
+
+</html>" > /var/www/html/index.html
+# start apache server
+systemctl start httpd
+systemctl enable httpd
