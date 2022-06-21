@@ -1,0 +1,169 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  CloudFormation Template for create a phonebook application in Python and deployed as
+  a web application with Flask on AWS Application Load Balancer with Auto Scaling Group 
+  of Elastic Compute Cloud (EC2) Instances and Relational Database Service (RDS) using 
+  AWS Cloudformation Service.
+Parameters:
+
+  VPC:
+    Description: Select your VPC
+    Type: AWS::EC2::VPC::Id
+  
+  Subnet:
+    Description: Select at least two subnets
+    Type: List<AWS::EC2::Subnet::Id>
+  
+  KeyPair:
+    Description: Select your key pair
+    Type: AWS::EC2::KeyPair::KeyName
+  
+  InstanceType:
+    Description: Select your instance type
+    Type: String
+    Default: t2.micro
+
+Mappings:
+  
+Resources:
+
+  ALBphone:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      SecurityGroups:
+        - !GetAtt SecGroupALB.GroupId
+      Subnets: !Ref Subnet
+      Type: application
+  
+  ALBtg:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 5
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 3
+      VpcId: !Ref VPC
+
+  myListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions: # Required
+        - Type: forward
+          TargetGroupArn: !Ref ALBtg
+      LoadBalancerArn: !Ref ALBphone # Required
+      Port: 80
+      Protocol: HTTP  
+ 
+  ASGphone:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AvailabilityZones: !GetAZs 
+      DesiredCapacity: "2"
+      HealthCheckGracePeriod: 90
+      HealthCheckType: ELB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LTphone
+        Version: "1"
+      MaxSize: "3" # Required
+      MinSize: "1" # Required
+      TargetGroupARNs:
+        - !Ref ALBtg
+
+  LTphone:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: ami-0cff7528ff583bf9a
+        InstanceType: !Ref InstanceType
+        KeyName: !Ref KeyPair
+        SecurityGroupIds:
+          - !GetAtt   SecGroupEC2.GroupId
+        Tags:
+          - Key: Name
+            Value: !Sub Web Server of ${AWS::StackName} Stack    
+        UserData: !Base64 |
+          #! /bin/bash
+          yum update -y
+          yum install python3 -y 
+          pip3 install flask
+          pip3 install flask_mysql
+          cd /home/ec2-user
+
+          FOLDER="https://raw.githubusercontent.com/volkan-sahin/my-proj/master/phonebook/"
+          wget ${FOLDER}/phonebook-app.py
+          mkdir templates && cd templates
+          wget ${FOLDER}/templates/index.html
+          wget ${FOLDER}/templates/delete.html
+          wget ${FOLDER}/templates/add-update.html
+          cd ..
+          python3 phonebook-app.py
+          
+  RDSphonebook:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: "20"
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: 0
+      DBInstanceClass: "db.t2.micro" # Required
+      DBInstanceIdentifier: "volkandb"
+      DBName: "volkan-phonebook"
+      DBSecurityGroups:
+        - !Ref DBsecGroup
+      DeletionProtection: false
+      Engine: "MySQL"
+      EngineVersion: "8.0.19"
+      MasterUserPassword: "Aa123456"
+      MasterUsername: "volkan"
+      MultiAZ: false
+      Port: "3306"
+      PromotionTier: Number
+      PubliclyAccessible: false
+      SourceDBInstanceIdentifier: "String"
+      SourceRegion: "String"
+      StorageEncrypted: false
+      StorageType: "String"
+      Tags:
+        Tags
+      Timezone: "String"
+      UseDefaultProcessorFeatures: false
+      VPCSecurityGroups:
+        VPCSecurityGroups
+
+
+  SecGroupALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALLOWS HTTP # Required
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VPC
+  
+  DBsecGroup:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties: 
+      GroupDescription: "Ingress for Amazon EC2 security group"
+      DBSecurityGroupIngress: 
+        - EC2SecurityGroupId: !GetAtt SecGroupEC2.GroupId
+      VpcId: !Ref VPC
+  
+  SecGroupEC2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALLOWS HTTP # Required
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !GetAtt SecGroupALB.GroupId
+          # SourceSecurityGroupOwnerId: !GetAtt ALBphone.SourceSecurityGroup.OwnerAlias
+          # SourceSecurityGroupName: !GetAtt ALBphone.SourceSecurityGroup.GroupName
+      VpcId: !Ref VPC
+
+  
+Outputs:
