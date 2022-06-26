@@ -1,1 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  CloudFormation Template for KittenCaruselCF Application. Kittens Carousel is a static website application deployed on AWS Simple Storage Service (S3), served through Cloudfront and Route 53 using AWS Cloudformation Service. 
+Parameters:
+  MyVPC:
+    Description: VPC Id of your existing account
+    Type: AWS::EC2::VPC::Id
 
+  KeyName:
+    Description: Please enter your Key pair
+    Type: AWS::EC2::KeyPair::KeyName
+  
+Resources:
+  S3SecurityGroup:
+    Type: AWS::S3::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP for Application Load Balancer
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref MyVPC
+
+Outputs:
+  WebsiteURL:
+    Value: !Sub 
+      - http://${ALBAddress}
+      - ALBAddress: !GetAtt ApplicationLoadBalancer.DNSName
+    Description: Phonebook Application Load Balancer URL
