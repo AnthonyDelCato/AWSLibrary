@@ -156,7 +156,7 @@ aws ec2 terminate-instances --instance-ids xxxxxxxxxxxx
 - To delete security groups:
 aws ec2 delete-security-group --group-name roman_numbers_sec_grp
 
-
+  
 
 - dokumantasyon:
 https://docs.aws.amazon.com/cli/latest/userguide
