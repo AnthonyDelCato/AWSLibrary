@@ -17,7 +17,7 @@ Region: "N.Virginia"
 VPC: "Default VPC"
 Securtiy Group: "0.0.0.0/0-----> Port 22"
 2. Connect to your instance with SSH.
-ssh -i .....pem ec2-user@
+ssh -i .....pem ec2-user@  
 ## Part 3 - Installing and Configuring Apache Web Server to Run `Hello World` Page
 # STEP_1_ Default Apache Web Server
 3. Update the installed packages and package cache on your instance.
